@@ -1,0 +1,13 @@
+﻿using FluentResults;
+using Priemka.Domain.Entities;
+
+namespace Priemka.Domain.Interfaces;
+
+public interface IDoctorsRepository
+{
+    Task AddAsync(Doctor doctor, CancellationToken ct);
+    Task<Result<IEnumerable<Doctor>>> GetAllDoctorsAsync(CancellationToken cancellationToken);
+    Task<Doctor> GetById(Guid id, CancellationToken ct);
+    Task SaveChangeAsync(CancellationToken ct);
+
+}

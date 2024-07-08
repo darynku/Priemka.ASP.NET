@@ -1,0 +1,15 @@
+version: '3.4'
+
+services:
+  redis:
+    container_name: redis
+    image: redis
+    restart: always
+    ports:
+      - 6379:6379
+  priemka.api:
+    image: ${DOCKER_REGISTRY-}priemkaapi
+    build:
+      context: .
+      dockerfile: Priemka.API/Dockerfile
+ 
