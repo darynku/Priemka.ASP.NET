@@ -1,3 +1,4 @@
+using Priemka.API.Extension;
 using Priemka.Application;
 using Priemka.Infrastructure;
 namespace Priemka.API
@@ -16,6 +17,8 @@ namespace Priemka.API
             builder.Services
                 .AddApplication()
                 .AddInfrastructure(builder.Configuration);
+
+            builder.Services.AddAuth(builder.Configuration);
 
             var app = builder.Build();
 

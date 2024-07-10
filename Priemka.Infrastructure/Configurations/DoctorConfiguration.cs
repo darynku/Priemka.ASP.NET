@@ -12,6 +12,11 @@ namespace Priemka.Infrastructure.Configurations
 
             builder.HasKey(d => d.Id);
 
+            builder
+                .HasOne<UserEntity>()
+                .WithOne()
+                .HasForeignKey<Doctor>(d => d.Id);
+
             builder.Property(d => d.Age).IsRequired();
             builder.Property(d => d.Speciality).HasColumnName("speciality").IsRequired();
             builder.Property(d => d.OnVacation).HasColumnName("on_vacation").IsRequired();

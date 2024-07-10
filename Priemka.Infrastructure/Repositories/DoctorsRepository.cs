@@ -14,18 +14,10 @@ namespace Priemka.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<Result<IEnumerable<Doctor>>> GetAllDoctorsAsync(CancellationToken cancellationToken)
+        public async Task<List<Doctor>> GetAllDoctorsAsync(CancellationToken cancellationToken)
         {
-            try
-            {
-                var doctors = await _context.Doctors.AsNoTracking().ToListAsync(cancellationToken);
-                return Result.Ok(doctors).Value;
-            }
-            catch (Exception ex)
-            {
-                return Result.Fail<IEnumerable<Doctor>>(ex.Message);
-            }
-
+            var doctors = await _context.Doctors.AsNoTracking().ToListAsync(cancellationToken);
+            return doctors;
         }
         public async Task<Doctor> GetById(Guid id, CancellationToken ct)
         {

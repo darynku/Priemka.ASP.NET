@@ -5,7 +5,7 @@ using Priemka.Domain.Interfaces;
 
 namespace Priemka.Application.Doctors.Get
 {
-    public class GetDoctorQueryHandler : IRequestHandler<GetDoctorQuery, Result<Doctor>>
+    public class GetDoctorQueryHandler : IRequestHandler<GetDoctorQuery, Result<List<Doctor>>>
     {
         private readonly IDoctorsRepository _repository;
 
@@ -14,11 +14,11 @@ namespace Priemka.Application.Doctors.Get
             _repository = repository;
         }
 
-        public async Task<Result<Doctor>> Handle(GetDoctorQuery request, CancellationToken cancellationToken)
+        public async Task<Result<List<Doctor>>> Handle(GetDoctorQuery request, CancellationToken cancellationToken)
         {
             var doctors = await _repository.GetAllDoctorsAsync(cancellationToken);
             
-            return Result.Ok();
+            return Result.Ok(doctors);
         }
     }
 }
