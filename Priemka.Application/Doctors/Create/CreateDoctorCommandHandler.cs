@@ -1,5 +1,6 @@
 ﻿using FluentResults;
 using MediatR;
+using Priemka.Application.DataAccess;
 using Priemka.Domain.Entities;
 using Priemka.Domain.Interfaces;
 using Priemka.Domain.ValueObjects;
@@ -9,10 +10,11 @@ namespace Priemka.Application.Doctors.Create
     public class CreateDoctorCommandHandler : IRequestHandler<CreateDoctorCommand, Result>
     {
         private readonly IDoctorsRepository _doctorsRepository;
-
-        public CreateDoctorCommandHandler(IDoctorsRepository doctorsRepository)
+        private readonly IUnitOfWork _unitOfWork;
+        public CreateDoctorCommandHandler(IDoctorsRepository doctorsRepository, IUnitOfWork unitOfWork)
         {
             _doctorsRepository = doctorsRepository;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<Result> Handle(CreateDoctorCommand request, CancellationToken cancellationToken)
@@ -48,6 +50,7 @@ namespace Priemka.Application.Doctors.Create
             if (doctor.IsFailed)
                 return doctor.ToResult();
             await _doctorsRepository.AddAsync(doctor.Value, cancellationToken);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
             return Result.Ok();
 
         }

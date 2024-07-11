@@ -8,12 +8,11 @@ using Priemka.API.Contracts;
 using Priemka.Application.Doctors.Create;
 using Priemka.Application.Doctors.Get;
 using Priemka.Application.Doctors.Update;
+using Priemka.Domain.Common;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
-namespace Priemka.API.Controllers.Doctors
+namespace Priemka.API.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
     public class DoctorsController : ApplicationController
     {
         private readonly ISender _sender;
@@ -22,8 +21,9 @@ namespace Priemka.API.Controllers.Doctors
         {
             _sender = sender;
         }
-       
+
         [HttpGet("getAll")]
+        [Permission(Permissions.Doctors.Read)]
         public async Task<IActionResult> GetDoctors(CancellationToken cancellationToken)
         {
             var result = await _sender.Send(new GetDoctorQuery(), cancellationToken);
@@ -37,7 +37,7 @@ namespace Priemka.API.Controllers.Doctors
                 Phone = d.Phone.Number,
                 OnVacation = d.OnVacation
             });
-            
+
             return Ok(doctorsDto);
         }
         [HttpPost("create")]

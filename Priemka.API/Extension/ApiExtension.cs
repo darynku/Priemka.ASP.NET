@@ -14,18 +14,20 @@ namespace Priemka.API.Extension
             services.AddSingleton<IAuthorizationHandler, PermissionPolicyHandler>();
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(options =>
+            .AddJwtBearer(options =>
+            {
+                var key = configuration.GetSection(JwtOptions.Jwt).Get<JwtOptions>()
+                          ?? throw new ApplicationException("Wrong configuration");
+
+                var symmetricKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key.SecretKey));
+
+                options.TokenValidationParameters = new()
                 {
-                    var key = configuration.GetSection(JwtOptions.Jwt).Get<JwtOptions>()
-                                ?? throw new ApplicationException("JwtOptions не найдены");
-                    var symmetrictKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key.SecretKey));
-                    options.TokenValidationParameters = new()
-                    {
-                        ValidateAudience = false,
-                        ValidateIssuer = false,
-                        IssuerSigningKey = symmetrictKey
-                    };
-                });
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    IssuerSigningKey = symmetricKey
+                };
+            });
 
             services.AddAuthorization();
         }

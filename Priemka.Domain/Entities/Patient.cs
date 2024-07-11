@@ -5,7 +5,8 @@ namespace Priemka.Domain.Entities;
 
 public class Patient : Entity
 {
-    private Patient(
+    private Patient() { }
+    public Patient(
         Guid id,
         FullName fullName, 
         Phone phone,
@@ -25,7 +26,6 @@ public class Patient : Entity
         Description = description;
     }
     
-    private Patient() { }
     public FullName FullName { get; private set; } = null!;
     public Phone Phone { get; private set; } = null!;
     public Email Email { get; private set; } = null!;

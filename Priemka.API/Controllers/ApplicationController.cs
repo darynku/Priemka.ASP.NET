@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Priemka.API.Controllers
 {
+    [Route("[controller]")]
     [ApiController]
     public class ApplicationController : ControllerBase
     {

@@ -6,7 +6,8 @@ namespace Priemka.Domain.Entities;
 
 public class Doctor : Entity
 {
-    private Doctor(
+    private Doctor() { }
+    public Doctor(
         Guid id,
         FullName fullName, 
         Phone phone,
@@ -27,7 +28,6 @@ public class Doctor : Entity
         _achivments = achivments.ToList();
         _workShedules = workShedules.ToList();
     }
-    private Doctor() { }
     public FullName FullName { get; private set; } = null!;
     public Phone Phone { get; private set; } = null!;
     public Email Email { get; private set; } = null!;

@@ -13,8 +13,8 @@ using Priemka.Infrastructure;
 namespace Priemka.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240707093210_init")]
-    partial class init
+    [Migration("20240711134300_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -26,10 +26,29 @@ namespace Priemka.Infrastructure.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("Priemka.Domain.Entities.Admin", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("admins", (string)null);
+                });
+
+            modelBuilder.Entity("Priemka.Domain.Entities.ApplicationUser", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("application_user", (string)null);
+                });
+
             modelBuilder.Entity("Priemka.Domain.Entities.Doctor", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("Age")
@@ -99,8 +118,87 @@ namespace Priemka.Infrastructure.Migrations
                     b.ToTable("doctors", (string)null);
                 });
 
+            modelBuilder.Entity("Priemka.Domain.Entities.UserEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("PasswordHash")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.ComplexProperty<Dictionary<string, object>>("Email", "Priemka.Domain.Entities.UserEntity.Email#Email", b1 =>
+                        {
+                            b1.IsRequired();
+
+                            b1.Property<string>("Value")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)")
+                                .HasColumnName("email");
+                        });
+
+                    b.ComplexProperty<Dictionary<string, object>>("FullName", "Priemka.Domain.Entities.UserEntity.FullName#FullName", b1 =>
+                        {
+                            b1.IsRequired();
+
+                            b1.Property<string>("FirstName")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)")
+                                .HasColumnName("first_name");
+
+                            b1.Property<string>("LastName")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)")
+                                .HasColumnName("last_name");
+                        });
+
+                    b.ComplexProperty<Dictionary<string, object>>("Role", "Priemka.Domain.Entities.UserEntity.Role#Role", b1 =>
+                        {
+                            b1.IsRequired();
+
+                            b1.Property<string>("Name")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)")
+                                .HasColumnName("role");
+
+                            b1.Property<string>("Permissions")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)")
+                                .HasColumnName("permissions");
+                        });
+
+                    b.HasKey("Id");
+
+                    b.ToTable("users", (string)null);
+                });
+
+            modelBuilder.Entity("Priemka.Domain.Entities.Admin", b =>
+                {
+                    b.HasOne("Priemka.Domain.Entities.UserEntity", null)
+                        .WithOne()
+                        .HasForeignKey("Priemka.Domain.Entities.Admin", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Priemka.Domain.Entities.ApplicationUser", b =>
+                {
+                    b.HasOne("Priemka.Domain.Entities.UserEntity", null)
+                        .WithOne()
+                        .HasForeignKey("Priemka.Domain.Entities.ApplicationUser", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Priemka.Domain.Entities.Doctor", b =>
                 {
+                    b.HasOne("Priemka.Domain.Entities.UserEntity", null)
+                        .WithOne()
+                        .HasForeignKey("Priemka.Domain.Entities.Doctor", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.OwnsMany("Priemka.Domain.ValueObjects.Achivments", "Achivments", b1 =>
                         {
                             b1.Property<Guid>("DoctorId")

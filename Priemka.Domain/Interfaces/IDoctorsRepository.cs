@@ -7,7 +7,6 @@ public interface IDoctorsRepository
 {
     Task AddAsync(Doctor doctor, CancellationToken ct);
     Task<List<Doctor>> GetAllDoctorsAsync(CancellationToken cancellationToken);
-    Task<Doctor> GetById(Guid id, CancellationToken ct);
-    Task SaveChangeAsync(CancellationToken ct);
+    Task<Result<Doctor>> GetById(Guid id, CancellationToken ct);
 
 }

@@ -1,6 +1,7 @@
 using Priemka.API.Extension;
 using Priemka.Application;
 using Priemka.Infrastructure;
+using Priemka.Infrastructure.Options;
 namespace Priemka.API
 {
     public class Program
@@ -14,11 +15,14 @@ namespace Priemka.API
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection(JwtOptions.Jwt));
+
             builder.Services
                 .AddApplication()
                 .AddInfrastructure(builder.Configuration);
 
             builder.Services.AddAuth(builder.Configuration);
+
 
             var app = builder.Build();
 
@@ -30,6 +34,7 @@ namespace Priemka.API
 
             app.UseHttpsRedirection();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapControllers();

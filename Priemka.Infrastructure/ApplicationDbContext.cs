@@ -9,7 +9,7 @@ namespace Priemka.Infrastructure
         {
         }
         public DbSet<Doctor> Doctors => Set<Doctor>();
-
+        public DbSet<UserEntity> Users => Set<UserEntity>();
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly,
