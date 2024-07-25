@@ -16,7 +16,7 @@ namespace Priemka.Application.Users.Login
 
         public async Task<Result<LoginRespones>> Handle(LoginCommand request, CancellationToken cancellationToken)
         {
-            var user = await _userRepository.GetByEmail(request.Email, cancellationToken);
+            var user = await _userRepository.GetEmailAsString(request.Email, cancellationToken);
             if (user.IsFailed) return user.ToResult();
 
             var passwordVerify = BCrypt.Net.BCrypt.Verify(request.Password, user.Value.PasswordHash);
@@ -28,7 +28,7 @@ namespace Priemka.Application.Users.Login
 
             var respones = new LoginRespones(token.Value, user.Value.Role.Name);
 
-            return Result.Ok(respones);
+            return respones;
         }
     }
 }

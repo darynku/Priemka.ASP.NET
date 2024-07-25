@@ -3,20 +3,22 @@ using Priemka.Infrastructure.Constants;
 
 namespace Priemka.API.Authorization
 {
-    public class PermissionPolicyHandler : AuthorizationHandler<PermissionAttribute>
+    public class PermissionAuthorizationHandler : AuthorizationHandler<PermissionAttribute>
     {
-        private readonly ILogger<PermissionPolicyHandler> _logger;
+        private readonly ILogger<PermissionAuthorizationHandler> _logger;
 
-        public PermissionPolicyHandler(ILogger<PermissionPolicyHandler> logger)
+        public PermissionAuthorizationHandler(ILogger<PermissionAuthorizationHandler> logger)
         {
             _logger = logger;
         }
 
         protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, PermissionAttribute requirement)
         {
-            var permission = context.User.Claims
+            var permission = context
+                .User.Claims
                 .Where(c => c.Type == Constants.Authentication.Permissions)
-                .Select(c => c.Value);
+                .Select(c => c.Value)
+                .ToHashSet();
 
             if(!permission.Contains(requirement.Permissions))
             {

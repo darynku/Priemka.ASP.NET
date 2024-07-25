@@ -2,6 +2,7 @@ using Priemka.API.Extension;
 using Priemka.Application;
 using Priemka.Infrastructure;
 using Priemka.Infrastructure.Options;
+using Microsoft.AspNetCore.CookiePolicy;
 namespace Priemka.API
 {
     public class Program
@@ -16,12 +17,14 @@ namespace Priemka.API
             builder.Services.AddSwaggerGen();
 
             builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection(JwtOptions.Jwt));
+            builder.Services.AddHttpContextAccessor();
 
             builder.Services
                 .AddApplication()
                 .AddInfrastructure(builder.Configuration);
 
             builder.Services.AddAuth(builder.Configuration);
+
 
 
             var app = builder.Build();
@@ -31,6 +34,13 @@ namespace Priemka.API
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+
+            app.UseCookiePolicy(new CookiePolicyOptions
+            {
+                MinimumSameSitePolicy = SameSiteMode.Strict,
+                HttpOnly = HttpOnlyPolicy.Always,
+                Secure = CookieSecurePolicy.Always
+            });
 
             app.UseHttpsRedirection();
 

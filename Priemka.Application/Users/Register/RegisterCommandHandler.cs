@@ -19,15 +19,12 @@ namespace Priemka.Application.Users.Register
 
         public async Task<Result> Handle(RegisterCommand request, CancellationToken cancellationToken)
         {
-            var fullName = FullName.Create(request.FirstName, request.LastName);
-            if (fullName.IsFailed) return fullName.ToResult();
-
             var email = Email.Create(request.Email);
             if (email.IsFailed) return email.ToResult();
 
             var passwordHash = BCrypt.Net.BCrypt.HashPassword(request.Password);
 
-            var user = UserEntity.CreateApplicationUser(fullName.Value, email.Value, passwordHash);
+            var user = UserEntity.CreateApplicationUser(email.Value, passwordHash);
             if (user.IsFailed) return user.ToResult();
 
             await _userRepository.AddAsync(user.Value, cancellationToken);

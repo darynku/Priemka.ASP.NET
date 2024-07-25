@@ -12,6 +12,7 @@ public class Patient : Entity
         Phone phone,
         Email email,
         Address address,
+        int age,
         DateTime birthDay,
         string trouble,
         string description) : base(id)
@@ -21,16 +22,21 @@ public class Patient : Entity
         Email = email;
         Address = address;
         BirthDay = birthDay;
-        Age = CalculateAge(birthDay);
+        Age = age;
         Trouble = trouble;
         Description = description;
     }
+    private readonly List<Doctor> _doctors = [];
+    public IReadOnlyList<Doctor> Doctors => _doctors;
     
     public FullName FullName { get; private set; } = null!;
     public Phone Phone { get; private set; } = null!;
     public Email Email { get; private set; } = null!;
     public Address Address { get; private set; } = null!;
-    
+
+    private readonly List<Appointment> _appointments = [];
+    public IReadOnlyList<Appointment> Appointments => _appointments;
+
     public DateTime BirthDay { get; private set; }
     public int Age { get; private set; }
 
@@ -43,6 +49,7 @@ public class Patient : Entity
         Phone phone,
         Email email,
         Address address,
+        int age,
         DateTime birthDay,
         string trouble, 
         string description)
@@ -54,15 +61,11 @@ public class Patient : Entity
         if (string.IsNullOrWhiteSpace(description))
             return Result.Fail("Описание не может быть пустым");
 
-        var patient = new Patient(id, fullName, phone, email, address, birthDay, trouble, description);
+        var patient = new Patient(id, fullName, phone, email, address, age, birthDay, trouble, description);
         return Result.Ok(patient);
     }
-
-    private static int CalculateAge(DateTime birthDay)
+    public void AddAppointment(Appointment appointment)
     {
-        var age = DateTime.Today.Year - birthDay.Year;
-        if (birthDay.Date > DateTime.Today.AddYears(-age)) 
-            age--;
-        return age;
+        _appointments.Add(appointment);
     }
 }

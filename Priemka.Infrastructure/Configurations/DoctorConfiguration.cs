@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Microsoft.Identity.Client;
 using Priemka.Domain.Entities;
+using Priemka.Domain.ValueObjects;
 
 namespace Priemka.Infrastructure.Configurations
 {
@@ -16,6 +18,10 @@ namespace Priemka.Infrastructure.Configurations
                 .HasOne<UserEntity>()
                 .WithOne()
                 .HasForeignKey<Doctor>(d => d.Id);
+
+            builder.HasMany<Appointment>().WithMany();
+
+            builder.HasMany(d => d.Patients).WithOne();
 
             builder.Property(d => d.Age).IsRequired();
             builder.Property(d => d.Speciality).HasColumnName("speciality").IsRequired();
@@ -58,9 +64,31 @@ namespace Priemka.Infrastructure.Configurations
 
             });
 
+            //builder.OwnsOne(d => d.DoctorTicket, ticket =>
+            //{
+            //    ticket.ToJson();
+
+            //    ticket.Property(t => t.Summary)
+            //        .HasColumnName("summary")
+            //        .IsRequired();
+
+            //    ticket.Property(t => t.Description)
+            //        .HasColumnName("description")
+            //        .IsRequired();
+
+            //    ticket.Property(t => t.AppointmentDate)
+            //        .HasColumnName("appointment_date")
+            //        .IsRequired();
+
+            //    ticket.OwnsMany(t => t.Medications, medication =>
+            //    {
+            //        medication.ToJson();
+            //        medication.Property(m => m.Name).IsRequired();
+            //        medication.Property(m => m.Dosage).IsRequired();
+            //    });
+            //});
             builder.OwnsMany(
-                d => d.Achivments, 
-                a =>
+                d => d.Achivments, a =>
             {
                 a.Property(a => a.AchivmentName);
                 a.Property(a => a.AchivmentDate);

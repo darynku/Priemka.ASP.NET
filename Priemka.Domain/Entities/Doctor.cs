@@ -1,6 +1,7 @@
 ﻿using FluentResults;
 using Priemka.Domain.Common;
 using Priemka.Domain.ValueObjects;
+using System.Reflection.Metadata.Ecma335;
 
 namespace Priemka.Domain.Entities;
 
@@ -32,12 +33,12 @@ public class Doctor : Entity
     public Phone Phone { get; private set; } = null!;
     public Email Email { get; private set; } = null!;
     public Address Address { get; private set; } = null!;
-    
+
     public int Age { get; private set; }
     public string Speciality { get; private set; } = null!;
     
-    //На отпуске или нет
     public bool OnVacation { get; private set; } 
+
 
     private readonly List<Achivments> _achivments = [];
     public IReadOnlyList<Achivments> Achivments => _achivments;
@@ -45,6 +46,11 @@ public class Doctor : Entity
     private readonly List<WorkShedule> _workShedules = [];
     public IReadOnlyList<WorkShedule> WorkShedules => _workShedules;
 
+    public readonly List<Patient> _patients = [];
+    public IReadOnlyList<Patient> Patients => _patients;
+
+    public readonly List<Appointment> _appointments = [];
+    public IReadOnlyList<Appointment> Appointments => _appointments;
     public static Result<Doctor> Create(
         Guid id,
         FullName fullName,
@@ -77,6 +83,10 @@ public class Doctor : Entity
         return Result.Ok(doctor);
     }
 
+    public void AddPatient(Patient patient)
+    {
+        _patients.Add(patient);
+    }
     public Result UpdateDoctor(string speciality, Address address, Phone phoneNumber, Email email)
     {
         var addressResult = Address.Create(address.City, address.Street);

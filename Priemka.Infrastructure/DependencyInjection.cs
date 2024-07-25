@@ -6,6 +6,7 @@ using Priemka.Domain.Interfaces;
 using Priemka.Infrastructure.Options;
 using Priemka.Infrastructure.Providers;
 using Priemka.Infrastructure.Repositories;
+using StackExchange.Redis;
 
 namespace Priemka.Infrastructure;
 
@@ -22,8 +23,11 @@ public static class DependencyInjection
 
         services.AddScoped<IDoctorsRepository, DoctorsRepository>();
         services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IPatientRepository, PatientRepository>();
+
         services.AddScoped<IJwtProvider, JwtProvider>();
 
+        //services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect("localhost"));
         services.AddStackExchangeRedisCache(
             options =>
             {

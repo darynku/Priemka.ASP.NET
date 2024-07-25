@@ -46,7 +46,7 @@ namespace Priemka.Infrastructure.Providers
             if (token is null)
                 return Result.Fail("Не удалось создать пользователя");
 
-            return Result.Ok(token);
+            return token;
         }
     }
 }

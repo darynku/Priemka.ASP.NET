@@ -1,12 +1,16 @@
 ﻿using FluentResults;
 using FluentResults.Extensions;
 using MediatR;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Priemka.API.Authorization;
 using Priemka.API.Contracts;
+using Priemka.Application.Doctors.AddPatient;
 using Priemka.Application.Doctors.Create;
 using Priemka.Application.Doctors.Get;
+using Priemka.Application.Doctors.GiveAppointment;
 using Priemka.Application.Doctors.Update;
 using Priemka.Domain.Common;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
@@ -22,8 +26,9 @@ namespace Priemka.API.Controllers
             _sender = sender;
         }
 
+
         [HttpGet("getAll")]
-        [Permission(Permissions.Doctors.Read)]
+        [Permission(permissions: Permissions.Doctors.Read)]
         public async Task<IActionResult> GetDoctors(CancellationToken cancellationToken)
         {
             var result = await _sender.Send(new GetDoctorQuery(), cancellationToken);
@@ -51,5 +56,17 @@ namespace Priemka.API.Controllers
         {
             return DefaultActionResult(await _sender.Send(command, ct));
         }
+
+        [HttpPost("addPatient")]
+        public async Task<IActionResult> AddPatient(AddPatientCommand command, CancellationToken ct)
+        {
+            return DefaultActionResult(await _sender.Send(command, ct));
+        }
+
+        //[HttpPost("giveAppointment")]
+        //public async Task<IActionResult> GiveAppointment(GiveAppointmentCommand, CancellationToken ct)
+        //{
+
+        //}
     }
 }

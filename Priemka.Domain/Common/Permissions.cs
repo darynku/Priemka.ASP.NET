@@ -9,7 +9,7 @@
             public const string Update = "doctors.update";
             public const string Delete = "doctors.dalete";
         }
-        public static class Patient
+        public static class Patients
         {
             public const string Read = "patient.read";
             public const string Create = "patient.create";

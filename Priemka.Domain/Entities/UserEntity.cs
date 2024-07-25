@@ -6,38 +6,35 @@ namespace Priemka.Domain.Entities;
 public class UserEntity : Entity
 { 
     private UserEntity() { }
-    private UserEntity(FullName fullName, Email email, string passwordHash, Role role)
+    private UserEntity(Email email, string passwordHash, Role role)
     {
-        FullName = fullName;
         Email = email;
         PasswordHash = passwordHash;
         Role = role;
     }
-
-    public FullName FullName { get; private set; } = null!;
     public Email Email { get; private set; } = null!;
     public string PasswordHash { get; private set; } = null!;
     public Role Role { get; private set; } = null!;
 
-    public static Result<UserEntity> CreateApplicationUser(FullName fullName, Email email, string passwordHash)
+    public static Result<UserEntity> CreateApplicationUser(Email email, string passwordHash)
     {
         if (passwordHash.Length < 5 && string.IsNullOrEmpty(passwordHash))
             return Result.Fail("Некоректный пароль");
 
-        return new UserEntity(fullName, email, passwordHash, Role.ApplicationUser);
+        return new UserEntity(email, passwordHash, Role.ApplicationUser);
     }
-    public static Result<UserEntity> CreateDoctor(FullName fullName, Email email, string passwordHash)
+    public static Result<UserEntity> CreateDoctor(Email email, string passwordHash)
     {
         if (passwordHash.Length < 5 && string.IsNullOrEmpty(passwordHash))
             return Result.Fail("Некоректный пароль");
 
-        return new UserEntity(fullName, email, passwordHash, Role.Doctor);
+        return new UserEntity(email, passwordHash, Role.Doctor);
     }
-    public static Result<UserEntity> CreateAdmin(FullName fullName, Email email, string passwordHash)
+    public static Result<UserEntity> CreateAdmin(Email email, string passwordHash)
     {
         if (passwordHash.Length < 5 && string.IsNullOrEmpty(passwordHash))
             return Result.Fail("Некоректный пароль");
 
-        return new UserEntity(fullName, email, passwordHash, Role.Admin);
+        return new UserEntity(email, passwordHash, Role.Admin);
     }
 }

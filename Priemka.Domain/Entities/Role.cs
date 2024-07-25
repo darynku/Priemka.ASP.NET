@@ -11,8 +11,8 @@ namespace Priemka.Domain.Entities
                  Common.Permissions.Doctors.Delete,
                  Common.Permissions.Doctors.Create,
 
-                 Common.Permissions.Patient.Delete,
-                 Common.Permissions.Patient.Update,
+                 Common.Permissions.Patients.Delete,
+                 Common.Permissions.Patients.Update,
 
 
             ]);
@@ -21,15 +21,15 @@ namespace Priemka.Domain.Entities
             [
                 Common.Permissions.Doctors.Read,
 
-                Common.Permissions.Patient.Create,
-                Common.Permissions.Patient.Delete,
-                Common.Permissions.Patient.Update,
-                Common.Permissions.Patient.Read,
+                Common.Permissions.Patients.Create,
+                Common.Permissions.Patients.Delete,
+                Common.Permissions.Patients.Update,
+                Common.Permissions.Patients.Read,
                 ]);
         public readonly static Role ApplicationUser = new(
-            "PATIENT",
+            "APPLICATION_USER",
             [
-                Common.Permissions.Patient.Read,
+                Common.Permissions.Patients.Read,
                 Common.Permissions.Doctors.Read
                 ]);
 

@@ -5,26 +5,22 @@ namespace Priemka.Domain.Entities;
 
 public class Appointment : Entity
 {
-    private Appointment(
+    private Appointment() { }
+    public  Appointment(
         Guid id,
-        Guid patientId,
-        Guid doctorId,
         DateTime appointmentDate,
         string summary,
-        string description) : base(id) 
+        string description,
+        IEnumerable<Medication> medications) : base(id) 
     {
-        PatientId = patientId;
-        DoctorId = doctorId;
         AppointmentDate = appointmentDate;
         Summary = summary;
         Description = description;
+        _medications = medications.ToList();
     }
-    private Appointment() { }
-    
+
     public Patient? Patient { get; private set; }
     public Doctor? Doctor { get; private set; }
-    public Guid PatientId { get; private set; } = Guid.Empty;
-    public Guid DoctorId { get; private set; } = Guid.Empty;
 
     public IReadOnlyList<Medication> Medications => _medications;
     private readonly List<Medication> _medications = new();
@@ -35,12 +31,8 @@ public class Appointment : Entity
     public string Description { get; private set; } = null!;
 
 
-    public static Result<Appointment> Create(Guid id, Guid patientId, Guid doctorId, DateTime appointmentDate, string summary, string description)
+    public static Result<Appointment> Create(Guid id, DateTime appointmentDate, string summary, string description, IEnumerable<Medication> medications)
     {
-        if (patientId == Guid.Empty)
-            return Result.Fail("ID пациента не может быть пустым");
-        if (doctorId == Guid.Empty)
-            return Result.Fail("ID врача не может быть пустым");
         if (appointmentDate == default)
             return Result.Fail("Дата приема не может быть пустой");
         if (string.IsNullOrWhiteSpace(summary))
@@ -48,7 +40,7 @@ public class Appointment : Entity
         if (string.IsNullOrWhiteSpace(description))
             return Result.Fail("Описание не может быть пустым");
 
-        var appointment = new Appointment(id, patientId, doctorId, appointmentDate, summary, description);
+        var appointment = new Appointment(id, appointmentDate, summary, description, medications);
         return Result.Ok(appointment);
     }
 
