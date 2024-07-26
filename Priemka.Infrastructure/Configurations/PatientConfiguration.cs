@@ -9,10 +9,15 @@ namespace Priemka.Infrastructure.Configurations
     {
         public void Configure(EntityTypeBuilder<Patient> builder)
         {
+
             builder.ToTable("patients");
             builder.HasKey(p => p.Id);
 
-            builder.HasMany<Appointment>().WithMany();
+            builder
+                .HasMany(p => p.Appointments)
+                .WithOne(a => a.Patient)
+                .HasForeignKey(a => a.PatientId)
+                .OnDelete(DeleteBehavior.Restrict);
 
 
             builder.Property(p => p.Age).HasColumnName("age");

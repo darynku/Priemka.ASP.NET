@@ -28,7 +28,7 @@ namespace Priemka.API.Controllers
 
 
         [HttpGet("getAll")]
-        [Permission(permissions: Permissions.Doctors.Read)]
+        //[Permission(permissions: Permissions.Doctors.Read)]
         public async Task<IActionResult> GetDoctors(CancellationToken cancellationToken)
         {
             var result = await _sender.Send(new GetDoctorQuery(), cancellationToken);
@@ -37,11 +37,26 @@ namespace Priemka.API.Controllers
 
             var doctorsDto = result.Value.Select(d => new DoctorDto
             {
+                Id = d.Id,
                 Name = d.FullName.FirstName,
                 LastName = d.FullName.LastName,
                 Phone = d.Phone.Number,
-                OnVacation = d.OnVacation
-            });
+                OnVacation = d.OnVacation,
+                Patients = d.Patients.Select(p => new PatientDto
+                {
+                    Id = p.Id,
+                    FirsName = p.FullName.FirstName,
+                    LastName = p.FullName.LastName,
+                    Phone = p.Phone.Number,
+                    Age = p.Age,
+                    Appointments = d.Appointments.Select(a => new AppointmentDto
+                    {
+                        Summary = a.Summary,
+                        Description = a.Description,
+                        AppoinmentDate = a.AppointmentDate
+                    })
+                })
+            }); 
 
             return Ok(doctorsDto);
         }
@@ -63,10 +78,10 @@ namespace Priemka.API.Controllers
             return DefaultActionResult(await _sender.Send(command, ct));
         }
 
-        //[HttpPost("giveAppointment")]
-        //public async Task<IActionResult> GiveAppointment(GiveAppointmentCommand, CancellationToken ct)
-        //{
-
-        //}
+        [HttpPost("giveAppointment")]
+        public async Task<IActionResult> GiveAppointment(GiveAppointmentCommand command, CancellationToken ct)
+        {
+            return DefaultActionResult(await _sender.Send(command, ct));
+        }
     }
 }

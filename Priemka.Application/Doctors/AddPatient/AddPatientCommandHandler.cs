@@ -1,11 +1,13 @@
 ﻿using FluentResults;
 using MediatR;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Priemka.Application.DataAccess;
 using Priemka.Domain.Common;
 using Priemka.Domain.Entities;
 using Priemka.Domain.Interfaces;
 using Priemka.Domain.ValueObjects;
+using System.Data;
 using System.Security.Claims;
 
 namespace Priemka.Application.Doctors.AddPatient
@@ -13,13 +15,15 @@ namespace Priemka.Application.Doctors.AddPatient
     public class AddPatientCommandHandler : IRequestHandler<AddPatientCommand, Result<Guid>>
     {
         private readonly IDoctorsRepository _repository;
+        private readonly IPatientRepository _patientRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        public AddPatientCommandHandler(IDoctorsRepository repository, IUnitOfWork unitOfWork, IHttpContextAccessor httpContextAccessor)
+        public AddPatientCommandHandler(IDoctorsRepository repository, IUnitOfWork unitOfWork, IHttpContextAccessor httpContextAccessor, IPatientRepository patientRepository)
         {
             _repository = repository;
             _unitOfWork = unitOfWork;
             _httpContextAccessor = httpContextAccessor;
+            _patientRepository = patientRepository;
         }
         public async Task<Result<Guid>> Handle(AddPatientCommand request, CancellationToken cancellationToken)
         {
@@ -39,8 +43,7 @@ namespace Priemka.Application.Doctors.AddPatient
             var address = Address.Create(request.Street, request.City);
             if(address.IsFailed) return address.ToResult();
 
-            var patient = Patient.Create(
-                Guid.NewGuid(), 
+            var patient = Patient.Create(     
                 fullName.Value, 
                 phone.Value, 
                 email.Value, 
@@ -51,7 +54,14 @@ namespace Priemka.Application.Doctors.AddPatient
                 request.Description);
 
             doctor.Value.AddPatient(patient.Value);
+            
+            await _patientRepository.AddAsync(patient.Value, cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
+            
+            //catch (DbUpdateConcurrencyException ex)
+            //{
+            //    throw new Exception(ex.Message);
+            //}
 
             return doctor.Value.Id;
         }

@@ -19,6 +19,8 @@ public class Appointment : Entity
         _medications = medications.ToList();
     }
 
+    public Guid PatientId { get; private set; }
+    public Guid DoctorId { get; private set; }
     public Patient? Patient { get; private set; }
     public Doctor? Doctor { get; private set; }
 

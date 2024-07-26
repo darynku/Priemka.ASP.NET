@@ -87,6 +87,11 @@ public class Doctor : Entity
     {
         _patients.Add(patient);
     }
+
+    public void AddAppointment(Appointment appointment)
+    {
+        _appointments.Add(appointment);
+    }
     public Result UpdateDoctor(string speciality, Address address, Phone phoneNumber, Email email)
     {
         var addressResult = Address.Create(address.City, address.Street);

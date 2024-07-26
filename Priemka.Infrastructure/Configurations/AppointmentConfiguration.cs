@@ -11,6 +11,17 @@ namespace Priemka.Infrastructure.Configurations
             builder.ToTable("appointment");
             builder.HasKey(a => a.Id);
 
+            builder.HasOne(a => a.Doctor)
+                    .WithMany(d => d.Appointments)
+                    .HasForeignKey(a => a.DoctorId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasOne(a => a.Patient)
+                   .WithMany(p => p.Appointments)
+                   .HasForeignKey(a => a.PatientId)
+                   .OnDelete(DeleteBehavior.Restrict);
+
+
             builder.Property(a => a.Summary).HasColumnName("summary");
             builder.Property(a => a.Description).HasColumnName("description");
             builder.OwnsMany(a => a.Medications, m =>

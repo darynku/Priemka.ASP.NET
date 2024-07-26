@@ -32,6 +32,10 @@ public class PatientRepository : IPatientRepository
         return parients;
     }
 
+    public async Task AddAsync(Patient patient, CancellationToken ct)
+    {
+        await _context.Patient.AddAsync(patient, ct);
+    }
     public async Task<Result<Patient>> GetByIdAsync(Guid id, CancellationToken cancellationToken)
     {
         var patient = await _context.Patient.FirstOrDefaultAsync(p => p.Id == id, cancellationToken);

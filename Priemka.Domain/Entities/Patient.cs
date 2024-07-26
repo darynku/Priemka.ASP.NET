@@ -26,8 +26,8 @@ public class Patient : Entity
         Trouble = trouble;
         Description = description;
     }
-    private readonly List<Doctor> _doctors = [];
-    public IReadOnlyList<Doctor> Doctors => _doctors;
+    
+    public Guid DoctorId { get; private set; }
     
     public FullName FullName { get; private set; } = null!;
     public Phone Phone { get; private set; } = null!;
@@ -44,7 +44,6 @@ public class Patient : Entity
     public string Description { get; private set; } = null!;
     
     public static Result<Patient> Create(
-        Guid id, 
         FullName fullName, 
         Phone phone,
         Email email,
@@ -61,7 +60,7 @@ public class Patient : Entity
         if (string.IsNullOrWhiteSpace(description))
             return Result.Fail("Описание не может быть пустым");
 
-        var patient = new Patient(id, fullName, phone, email, address, age, birthDay, trouble, description);
+        var patient = new Patient(Guid.NewGuid(),fullName, phone, email, address, age, birthDay, trouble, description);
         return Result.Ok(patient);
     }
     public void AddAppointment(Appointment appointment)

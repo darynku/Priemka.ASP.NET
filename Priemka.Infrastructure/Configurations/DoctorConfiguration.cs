@@ -19,9 +19,17 @@ namespace Priemka.Infrastructure.Configurations
                 .WithOne()
                 .HasForeignKey<Doctor>(d => d.Id);
 
-            builder.HasMany<Appointment>().WithMany();
+            builder
+                .HasMany(d => d.Appointments)
+                .WithOne(a => a.Doctor)
+                .HasForeignKey(a => a.DoctorId)
+                .OnDelete(DeleteBehavior.Restrict);
 
-            builder.HasMany(d => d.Patients).WithOne();
+            builder
+                .HasMany(d => d.Patients)
+                .WithOne()
+                .HasForeignKey(p => p.DoctorId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             builder.Property(d => d.Age).IsRequired();
             builder.Property(d => d.Speciality).HasColumnName("speciality").IsRequired();

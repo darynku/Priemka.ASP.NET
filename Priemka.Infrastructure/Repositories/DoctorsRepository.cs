@@ -17,6 +17,7 @@ namespace Priemka.Infrastructure.Repositories
         public async Task<List<Doctor>> GetAllDoctorsAsync(CancellationToken cancellationToken)
         {
             var doctors = await _context.Doctors
+                .Include(d => d.Appointments)
                 .Include(d => d.Patients)
                 .AsNoTracking()
                 .ToListAsync(cancellationToken);
@@ -27,6 +28,7 @@ namespace Priemka.Infrastructure.Repositories
         {
             var doctor = await _context.Doctors
                 .Include(d => d.Patients)
+                .Include(d => d.Appointments)
                 .FirstOrDefaultAsync(d => d.Id == id, ct);
             if (doctor is null)
                 return Result.Fail($"Доктор с такиm id не найден: {id}");

@@ -5,7 +5,7 @@ namespace Priemka.Domain.ValueObjects
 {
     public class Medication : ValueObject
     {
-        private Medication(string name, string dosage)
+        public Medication(string name, string dosage)
         {
             Name = name;
             Dosage = dosage;

@@ -23,36 +23,6 @@ namespace Priemka.Infrastructure.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("AppointmentDoctor", b =>
-                {
-                    b.Property<Guid>("AppointmentId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("Doctor1Id")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("AppointmentId", "Doctor1Id");
-
-                    b.HasIndex("Doctor1Id");
-
-                    b.ToTable("AppointmentDoctor");
-                });
-
-            modelBuilder.Entity("AppointmentPatient", b =>
-                {
-                    b.Property<Guid>("AppointmentId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("Patient1Id")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("AppointmentId", "Patient1Id");
-
-                    b.HasIndex("Patient1Id");
-
-                    b.ToTable("AppointmentPatient");
-                });
-
             modelBuilder.Entity("Priemka.Domain.Entities.Admin", b =>
                 {
                     b.Property<Guid>("Id")
@@ -87,10 +57,10 @@ namespace Priemka.Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("description");
 
-                    b.Property<Guid?>("DoctorId")
+                    b.Property<Guid>("DoctorId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("PatientId")
+                    b.Property<Guid>("PatientId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Summary")
@@ -118,9 +88,6 @@ namespace Priemka.Infrastructure.Migrations
                     b.Property<bool>("OnVacation")
                         .HasColumnType("bit")
                         .HasColumnName("on_vacation");
-
-                    b.Property<Guid?>("PatientId")
-                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Speciality")
                         .IsRequired()
@@ -179,8 +146,6 @@ namespace Priemka.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("PatientId");
-
                     b.ToTable("doctors", (string)null);
                 });
 
@@ -203,7 +168,7 @@ namespace Priemka.Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("description");
 
-                    b.Property<Guid?>("DoctorId")
+                    b.Property<Guid>("DoctorId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Trouble")
@@ -310,36 +275,6 @@ namespace Priemka.Infrastructure.Migrations
                     b.ToTable("users", (string)null);
                 });
 
-            modelBuilder.Entity("AppointmentDoctor", b =>
-                {
-                    b.HasOne("Priemka.Domain.Entities.Appointment", null)
-                        .WithMany()
-                        .HasForeignKey("AppointmentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Priemka.Domain.Entities.Doctor", null)
-                        .WithMany()
-                        .HasForeignKey("Doctor1Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("AppointmentPatient", b =>
-                {
-                    b.HasOne("Priemka.Domain.Entities.Appointment", null)
-                        .WithMany()
-                        .HasForeignKey("AppointmentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Priemka.Domain.Entities.Patient", null)
-                        .WithMany()
-                        .HasForeignKey("Patient1Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("Priemka.Domain.Entities.Admin", b =>
                 {
                     b.HasOne("Priemka.Domain.Entities.UserEntity", null)
@@ -362,11 +297,15 @@ namespace Priemka.Infrastructure.Migrations
                 {
                     b.HasOne("Priemka.Domain.Entities.Doctor", "Doctor")
                         .WithMany("Appointments")
-                        .HasForeignKey("DoctorId");
+                        .HasForeignKey("DoctorId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.HasOne("Priemka.Domain.Entities.Patient", "Patient")
                         .WithMany("Appointments")
-                        .HasForeignKey("PatientId");
+                        .HasForeignKey("PatientId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.OwnsMany("Priemka.Domain.ValueObjects.Medication", "Medications", b1 =>
                         {
@@ -411,10 +350,6 @@ namespace Priemka.Infrastructure.Migrations
                         .HasForeignKey("Priemka.Domain.Entities.Doctor", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("Priemka.Domain.Entities.Patient", null)
-                        .WithMany("Doctors")
-                        .HasForeignKey("PatientId");
 
                     b.OwnsMany("Priemka.Domain.ValueObjects.Achivments", "Achivments", b1 =>
                         {
@@ -480,7 +415,9 @@ namespace Priemka.Infrastructure.Migrations
                 {
                     b.HasOne("Priemka.Domain.Entities.Doctor", null)
                         .WithMany("Patients")
-                        .HasForeignKey("DoctorId");
+                        .HasForeignKey("DoctorId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Priemka.Domain.Entities.Doctor", b =>
@@ -493,8 +430,6 @@ namespace Priemka.Infrastructure.Migrations
             modelBuilder.Entity("Priemka.Domain.Entities.Patient", b =>
                 {
                     b.Navigation("Appointments");
-
-                    b.Navigation("Doctors");
                 });
 #pragma warning restore 612, 618
         }
