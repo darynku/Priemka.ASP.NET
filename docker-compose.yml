@@ -1,15 +1,38 @@
 version: '3.4'
 
 services:
+  priemka.api:
+    image: ${DOCKER_REGISTRY-}priemkaapi
+    build:
+      context: .
+      dockerfile: Priemka.API/Dockerfile
+    ports:
+    - "8080:8080"
+    - "8081:8081"  
+    networks:
+        - priemka-network
+    depends_on:
+        db:
+            condition: service_started
+            restart: true
   redis:
     container_name: redis
     image: redis
     restart: always
     ports:
       - 6379:6379
-  priemka.api:
-    image: ${DOCKER_REGISTRY-}priemkaapi
-    build:
-      context: .
-      dockerfile: Priemka.API/Dockerfile
- 
+
+  db:
+    image: "mcr.microsoft.com/mssql/server"
+    container_name: sql_server19
+    environment:
+      SA_PASSWORD: "I@hazgarm135."
+      ACCEPT_EULA: "Y"
+    ports:
+        - "1433:1433"
+    networks:
+        - priemka-network
+  
+networks:
+  priemka-network:
+

@@ -3,6 +3,7 @@ using Priemka.Application;
 using Priemka.Infrastructure;
 using Priemka.Infrastructure.Options;
 using Microsoft.AspNetCore.CookiePolicy;
+using Microsoft.EntityFrameworkCore;
 namespace Priemka.API
 {
     public class Program
@@ -25,8 +26,6 @@ namespace Priemka.API
 
             builder.Services.AddAuth(builder.Configuration);
 
-
-
             var app = builder.Build();
 
             if (app.Environment.IsDevelopment())
@@ -48,6 +47,12 @@ namespace Priemka.API
             app.UseAuthorization();
 
             app.MapControllers();
+
+            using (var serviceScope = app.Services.GetRequiredService<IServiceScopeFactory>().CreateScope())
+            {
+                var context = serviceScope.ServiceProvider.GetService<ApplicationDbContext>();
+                context.Database.Migrate();
+            }
 
             app.Run();
         }
